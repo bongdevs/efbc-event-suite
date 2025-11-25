@@ -98,9 +98,32 @@ class EFBC_Event_Shortcodes {
             "Address" => "address",
             "Organization" => "organization",
             "Company" => "companyType",
-            "Group" => "groupAssigned",
+            "Group Assigned" => "groupAssigned",
             "Wednesday Activity" => "wednesdayActivity",
         ];
+
+        // Fetch group names if "Group Assigned" column is included
+        $groupNames = [];
+        if ( in_array('Group Assigned', $columns) ) {
+            $groupIds = array_filter(array_map(function($att) { return $att['groupAssigned'] ?? null; }, $attendees));
+            $groupIds = array_unique($groupIds);
+
+            foreach ($groupIds as $groupId) {
+                $group_url = trailingslashit( $api_base ) . "groups/{$groupId}";
+                $group_response = wp_remote_get( $group_url );
+                if ( !is_wp_error( $group_response ) ) {
+                    $group_body = wp_remote_retrieve_body( $group_response );
+                    $group_data = json_decode( $group_body, true );
+                    if ( isset($group_data['data']['name']) ) {
+                        $groupNames[$groupId] = $group_data['data']['name'];
+                    } else {
+                        $groupNames[$groupId] = 'Unknown';
+                    }
+                } else {
+                    $groupNames[$groupId] = 'Unknown';
+                }
+            }
+        }
 
         $table_id = 'efbc_table_' . $event_id . '_' . sanitize_title($activity_filter ?: 'all');
 
@@ -120,6 +143,10 @@ class EFBC_Event_Shortcodes {
                 $key = $fieldKeyMap[$col] ?? '';
                 $value = $key && isset($att[$key]) ? $att[$key] : '';
                 if ($col === "Paid") $value = !empty($att['paid']) ? 'Yes' : 'No';
+                if ($col === "Group Assigned") {
+                    $groupId = $att['groupAssigned'] ?? null;
+                    $value = $groupId && isset($groupNames[$groupId]) ? $groupNames[$groupId] : ($groupId ? 'Unknown' : 'Unassigned');
+                }
                 $html .= '<td>' . esc_html($value) . '</td>';
             }
             $html .= '</tr>';

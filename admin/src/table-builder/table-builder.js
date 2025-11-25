@@ -5,7 +5,7 @@ import DraggableColumns from '../components/DraggableColumns';
 const allPossibleColumns = [
     'Name','Email','Phone','Status','Golf Handicap','Club Rentals',
     'Paid','City','State','Zip','Country','Address','Organization',
-    'Company','Group','Wednesday Activity'
+    'Company','Wednesday Activity','Group Assigned'
 ];
 
 const fieldKeyMap = {
@@ -23,7 +23,7 @@ const fieldKeyMap = {
     "Address": "address",
     "Organization": "organization",
     "Company": "companyType",
-    "Group": "groupAssigned",
+    "Group Assigned": "groupAssigned",
     "Wednesday Activity": "wednesdayActivity",
 };
 
@@ -38,6 +38,7 @@ const TableBuilder = () => {
     const [activeTab, setActiveTab] = useState('All Attendees');
     const [fade, setFade] = useState(true);
     const [toast, setToast] = useState({ message: '', visible: false });
+    const [groupNames, setGroupNames] = useState({});
 
     useEffect(() => {
         fetch(`${efbcData.ajaxUrl}?action=efbc_get_events`)
@@ -80,6 +81,34 @@ const TableBuilder = () => {
             .catch(err => { console.error(err); setError("Failed to load attendees or columns"); setLoading(false); });
     }, [selectedEventId, events]);
 
+    useEffect(() => {
+        const hasGroupColumn = Object.values(columns).some(col => col.includes('Group Assigned'));
+        if (!hasGroupColumn || attendees.length === 0) return;
+
+        const groupIds = attendees
+            .map(att => att.groupAssigned)
+            .filter(id => id && !groupNames[id]);
+
+        if (groupIds.length === 0) return;
+
+        const fetchGroups = async () => {
+            const newGroupNames = {};
+            for (const groupId of [...new Set(groupIds)]) {
+                try {
+                    const response = await fetch(`https://server.efbcconference.org/api/groups/${groupId}`);
+                    const data = await response.json();
+                    newGroupNames[groupId] = data.data?.name || 'Unknown';
+                } catch (error) {
+                    console.error(`Failed to fetch group ${groupId}:`, error);
+                    newGroupNames[groupId] = 'Unknown';
+                }
+            }
+            setGroupNames(prev => ({...prev, ...newGroupNames}));
+        };
+
+        fetchGroups();
+    }, [attendees, columns]);
+
     const showToast = (msg) => { setToast({ message: msg, visible: true }); setTimeout(()=>setToast({ message:'', visible:false }),3000); };
 
     const saveColumns = (activity) => {
@@ -119,7 +148,12 @@ const TableBuilder = () => {
                         <thead><tr>{col.map(c=><th key={c} className="efbc-table-header-cell">{c}</th>)}</tr></thead>
                         <tbody>
                             {tableAttendees.map((att,idx)=>(
-                                <tr key={att.id} className={idx % 2 === 0 ? 'efbc-row-odd' : 'efbc-row-even'}>{col.map((c,i)=><td key={i} className="efbc-table-cell">{c==='Paid'?att[fieldKeyMap[c]]?'Yes':'No':(att[fieldKeyMap[c]]??'')}</td>)}</tr>
+                                <tr key={att.id} className={idx % 2 === 0 ? 'efbc-row-odd' : 'efbc-row-even'}>{col.map((c,i)=>{
+                                    let cellValue = att[fieldKeyMap[c]];
+                                    if (c === 'Paid') cellValue = cellValue ? 'Yes' : 'No';
+                                    if (c === 'Group Assigned') cellValue = groupNames[cellValue] || (cellValue ? 'Loading...' : 'Unassigned');
+                                    return <td key={i} className="efbc-table-cell">{cellValue ?? ''}</td>;
+                                })}</tr>
                             ))}
                         </tbody>
                     </table>

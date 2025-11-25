@@ -15,12 +15,13 @@ const fieldKeyMap = {
     "Address": "address",
     "Organization": "organization",
     "Company": "companyType",
-    "Group": "groupAssigned",
+    "Group Assigned": "groupAssigned",
     "Wednesday Activity": "wednesdayActivity",
 };
 
 const Modal = ({ open, title, loading, data, onClose, eventId, activity }) => {
     const [columns, setColumns] = useState(['Name', 'Email', 'Phone', 'Status']);
+    const [groupNames, setGroupNames] = useState({});
 
     useEffect(() => {
         if (!open || !eventId) return;
@@ -39,6 +40,33 @@ const Modal = ({ open, title, loading, data, onClose, eventId, activity }) => {
             })
             .catch(err => console.error('Failed to load saved columns:', err));
     }, [open, eventId, activity]);
+
+    useEffect(() => {
+        if (!columns.includes('Group Assigned') || data.length === 0) return;
+        
+        const groupIds = data
+            .map(att => att.groupAssigned)
+            .filter(id => id && !groupNames[id]);
+        
+        if (groupIds.length === 0) return;
+
+        const fetchGroups = async () => {
+            const newGroupNames = {};
+            for (const groupId of [...new Set(groupIds)]) {
+                try {
+                    const response = await fetch(`https://server.efbcconference.org/api/groups/${groupId}`);
+                    const res = await response.json();
+                    newGroupNames[groupId] = res.data?.name || 'Unknown';
+                } catch (error) {
+                    console.error(`Failed to fetch group ${groupId}:`, error);
+                    newGroupNames[groupId] = 'Unknown';
+                }
+            }
+            setGroupNames(prev => ({...prev, ...newGroupNames}));
+        };
+        
+        fetchGroups();
+    }, [data, columns]);
 
     if (!open) return null;
 
@@ -84,6 +112,7 @@ const Modal = ({ open, title, loading, data, onClose, eventId, activity }) => {
                                             const key = fieldKeyMap[col];
                                             let value = key && att[key] ? att[key] : '';
                                             if (col === 'Paid') value = att.paid ? 'Yes' : 'No';
+                                            if (col === 'Group Assigned') value = groupNames[att.groupAssigned] || (att.groupAssigned ? 'Loading...' : 'Unassigned');
                                             return <td key={i} className="efbc-table-cell">{value}</td>;
                                         })}
                                     </tr>
