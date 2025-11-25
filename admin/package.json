@@ -1,0 +1,16 @@
+{
+  "name": "efbc-event-suite-admin",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "dependencies": {
+    "@wordpress/element": "^6.1.0",
+    "react-beautiful-dnd": "^13.1.1"
+  },
+  "devDependencies": {
+    "@wordpress/scripts": "^27.3.0"
+  }
+}
