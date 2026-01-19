@@ -1,0 +1,239 @@
+/* Variables -- inline styles injected by PHP will override colors when present */
+:root{
+    --efbc-header-bg: #0073aa;
+    --efbc-header-text: #ffffff;
+    --efbc-even-row: #f9f9f9;
+    --efbc-row-hover: #f1faff;
+    --efbc-primary: #0073aa;
+    --efbc-primary-hover: #005a87;
+    --efbc-active: #006799; /* active page color */
+    --efbc-gap: 8px; /* gap between pagination buttons */
+    --efbc-btn-padding: 10px 12px; /* button padding */
+}
+
+/* Wrapper for responsive table */
+.efbc-attendees-table-wrapper{
+    width:100%;
+    overflow-x:auto;
+    margin:25px 0;
+    border-radius:10px 10px 0 0;
+    overflow:hidden;
+}
+
+.efbc-table-controls{margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding:20px}
+.efbc-table-search{width:100%;max-width:320px;padding:11px 15px;border:1px solid #dddddd;border-radius:6px;font-size:14px;transition:all .2s ease;background:#fafafa;box-shadow:inset 0 1px 3px rgba(0,0,0,0.03)}
+.efbc-table-search::placeholder{color:#999;font-weight:400}
+.efbc-table-search:focus{border-color:var(--efbc-primary) !important;background:#fff;box-shadow:inset 0 1px 3px rgba(0,0,0,0.03), 0 0 0 4px rgba(0,115,170,0.12);outline:none}
+
+/* Main table styles */
+.efbc-attendees-table{
+    width:100%;
+    border-collapse:collapse;
+    font-family:inherit;
+    font-size:14px;
+    line-height:1.6;
+    min-width:600px;
+    box-shadow:0 0 20px rgba(0,0,0,0.1);
+    border-radius:8px 8px 0 0;
+    overflow:hidden;
+    background:#fff;
+    margin-bottom: 0px;
+}
+
+/* Header */
+.efbc-attendees-table thead tr{
+    background-color:var(--efbc-header-bg) !important;
+    color:var(--efbc-header-text) !important;
+    text-align:left;
+}
+
+.efbc-attendees-table thead th{
+    background-color:var(--efbc-header-bg) !important;
+    color:var(--efbc-header-text) !important;
+    font-weight:700;
+    text-transform:uppercase;
+    padding:12px 15px;
+    position:sticky;top:0;z-index:2;cursor:pointer;text-align:left;position:relative;font-size:11px;letter-spacing:0.6px;
+}
+.efbc-attendees-table th:first-child{border-top-left-radius:8px}
+.efbc-attendees-table th:last-child{border-top-right-radius:8px}
+
+.efbc-attendees-table tbody td{padding:12px 15px;border-bottom:1px solid #dddddd;vertical-align:middle;color:var(--efbc-text) !important;border-right:none;border-left:none}
+
+/* Zebra striping & professional row styling */
+.efbc-attendees-table tbody tr{
+    border-bottom:1px solid #dddddd;
+    transition:all 0.2s ease-in-out;
+}
+
+.efbc-attendees-table tbody tr:nth-child(odd){
+    background-color:var(--efbc-odd-row) !important;
+}
+
+.efbc-attendees-table tbody tr:nth-child(even){
+    background-color:var(--efbc-even-row) !important;
+}
+
+/* Row hover - applies to both odd and even rows with maximum specificity */
+.efbc-attendees-table tbody tr:nth-child(odd):hover,
+.efbc-attendees-table tbody tr:nth-child(even):hover{
+    background-color:var(--efbc-row-hover) !important;
+    color:var(--efbc-text) !important;
+    cursor:pointer;
+    transition:0.2s ease-in-out;
+}
+
+/* Status badges */
+.efbc-attendees-table td.status-badge{padding:0}
+.efbc-attendees-table .badge{
+    display:inline-block;padding:6px 12px;border-radius:18px;font-size:12px;font-weight:600
+}
+.efbc-attendees-table .badge.confirmed{color:#155724;background:#d4edda}
+.efbc-attendees-table .badge.pending{color:#856404;background:#fff3cd}
+.efbc-attendees-table .badge.canceled{color:#721c24;background:#f8d7da}
+
+/* ===== PROFESSIONAL PAGINATION STYLES ===== */
+.efbc-frontend-pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:var(--efbc-gap);
+    margin-bottom:0;
+    padding:16px 20px;
+    flex-wrap:wrap;
+    background:linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+    border-bottom:2px solid var(--efbc-header-bg);
+    border-radius:0 0 8px 8px;
+}
+
+.efbc-pagination-info{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:16px;
+    font-size:13px;
+    color:#666;
+}
+
+.efbc-pagination-stats{
+    color:#666;
+    font-weight:500;
+}
+
+/* Pagination buttons */
+.efbc-pagination-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:40px;
+    height:40px;
+    padding:var(--efbc-btn-padding);
+    border:1px solid #dddddd;
+    background:var(--efbc-primary);
+    color:var(--efbc-btn-text) !important;
+    font-size:14px;
+    font-weight:600;
+    border-radius:6px;
+    cursor:pointer;
+    transition:all 0.2s ease-in-out;
+    user-select:none;
+    box-shadow:0 1px 3px rgba(0,0,0,0.04);
+}
+
+.efbc-pagination-btn:hover:not(:disabled){
+    background:var(--efbc-primary-hover) !important;
+    color:#fff !important;
+    border-color:var(--efbc-primary-hover) !important;
+    transform:translateY(-2px);
+    box-shadow:0 6px 16px rgba(0,115,170,0.14) !important;
+}
+
+.efbc-pagination-btn.active{
+    background:var(--efbc-active) !important;
+    color:#fff !important;
+    border-color:var(--efbc-active) !important;
+    font-weight:700;
+    box-shadow:0 6px 18px rgba(0,103,153,0.16) !important;
+}
+
+.efbc-pagination-btn:disabled{
+    opacity:0.45;
+    cursor:not-allowed;
+    background:#f5f5f5;
+    color:#bbb;
+}
+
+.efbc-pagination-btn.nav-btn{
+    min-width:92px;
+    font-weight:700;
+    padding:8px 14px;
+}
+
+.efbc-pagination-btn.nav-btn svg{
+    width:16px;
+    height:16px;
+    margin:0 6px;
+}
+
+/* Page number separator */
+.efbc-pagination-separator{
+    color:#ccc;
+    margin:0 2px;
+}
+
+/* Loading indicator */
+.efbc-pagination-loading{
+    display:inline-block;
+    width:16px;
+    height:16px;
+    margin-left:8px;
+    border:2px solid var(--efbc-border);
+    border-top-color:var(--efbc-primary);
+    border-radius:50%;
+    animation:spin 0.6s linear infinite;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* Responsive */
+@media screen and (max-width:768px){
+    .efbc-attendees-table thead th,.efbc-attendees-table tbody td{padding:10px 12px;font-size:13px}
+    .efbc-pagination-btn{min-width:34px;height:34px;font-size:12px}
+    .efbc-table-controls{flex-direction:column;align-items:stretch}
+    .efbc-table-search{max-width:100%}
+    .efbc-pagination-info{font-size:12px}
+}
+
+/* Smooth transitions */
+.efbc-attendees-table td,.efbc-attendees-table th{transition:all .16s ease}
+
+/* Utility to ensure admin modal/table also inherits colors when inline styles applied */
+.wrap #efbc-event-suite-app .efbc-attendees-table thead th,
+.wrap #efbc-table-builder-app .efbc-attendees-table thead th{background:var(--efbc-primary);color:var(--efbc-header-text)}
+
+/* Sorting icons for headers */
+.efbc-attendees-table thead th::after{
+    content: '⇅';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    opacity: 0.9;
+    transition: transform .18s ease, opacity .12s ease;
+}
+.efbc-attendees-table thead th.asc::after{ content: '▲'; }
+.efbc-attendees-table thead th.desc::after{ content: '▼'; }
+/* Focus visible for keyboard users */
+.efbc-pagination-btn:focus{
+    outline:3px solid rgba(0,115,170,0.12);
+    outline-offset:2px;
+}
+
+/* Ensure small screens can still tap headers */
+@media (max-width:480px){
+    .efbc-attendees-table thead th::after{ right:6px; font-size:11px }
+}
+
