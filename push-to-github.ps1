@@ -76,8 +76,8 @@ Write-Host ""
 Write-Host "[5/6] Adding remote and pushing to GitHub..." -ForegroundColor Yellow
 $remoteExists = git remote get-url origin 2>$null
 if (-not $remoteExists) {
-    Write-Host "Adding GitHub remote..." -ForegroundColor Green
-    git remote add origin https://github.com/bongdevs/efbc-event-suite.git
+    Write-Host "Adding GitHub remote (using SSH)..." -ForegroundColor Green
+    git remote add origin git@github.com:bongdevs/efbc-event-suite.git
 } else {
     Write-Host "Remote 'origin' already exists: $remoteExists" -ForegroundColor Green
 }
@@ -95,7 +95,7 @@ Write-Host "=====================================" -ForegroundColor Green
 Write-Host "Push completed successfully!" -ForegroundColor Green
 Write-Host "=====================================" -ForegroundColor Green
 Write-Host ""
-Write-Host "Repository: https://github.com/bongdevs/efbc-event-suite" -ForegroundColor Cyan
+Write-Host "Repository: git@github.com:bongdevs/efbc-event-suite.git" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
 Write-Host "1. Rebuild admin bundle (if needed):" -ForegroundColor White
