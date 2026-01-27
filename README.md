@@ -2,7 +2,7 @@
 
 A complete event management plugin for WordPress with a powerful React admin dashboard and dynamic attendee management.
 
-**Version:** 1.2.0  
+**Version:** 1.2.1  
 **Author:** [Bongdevs.com](https://bongdevs.com)  
 **License:** GPL2  
 **Repository:** [github.com/bongdevs/efbc-event-suite](https://github.com/bongdevs/efbc-event-suite)

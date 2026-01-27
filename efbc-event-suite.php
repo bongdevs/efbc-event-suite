@@ -3,7 +3,7 @@
  * Plugin Name: EFBC Event Suite
  * Plugin URI:  https://bongdevs.com
  * Description: Complete event management plugin with an admin React dashboard and a dynamic [efbc_attendees event_id="2"] shortcode. Display and manage attendees efficiently, with search and filtering options, and fully customizable table columns.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Bongdevs.com
  * Author URI: https://bongdevs.com
  * Text Domain: efbc-event-suite
@@ -29,7 +29,7 @@
 
 if (!defined('ABSPATH')) exit;
 
-define('EFBC_ES_VERSION', '1.2.0');
+define('EFBC_ES_VERSION', '1.2.1');
 define('EFBC_ES_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('EFBC_ES_PLUGIN_URL', plugin_dir_url(__FILE__));
 

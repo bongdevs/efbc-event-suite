@@ -1,7 +1,10 @@
 import { useState, useEffect } from '@wordpress/element';
 
 const fieldKeyMap = {
-    "Name": "badgeName",
+    "First Name": "firstName",
+    "Last Name": "lastName",
+    "Full Name": "fullName",
+    "Badge Name": "badgeName",
     "Email": "email",
     "Phone": "mobile",
     "Status": "status",
@@ -121,6 +124,10 @@ const Modal = ({ open, title, loading, data, onClose, eventId, activity, page = 
                                         {columns.map((col, i) => {
                                             const key = fieldKeyMap[col];
                                             let value = key && att[key] ? att[key] : '';
+                                            // Handle Full Name by combining firstName and lastName
+                                            if (col === 'Full Name') {
+                                                value = (att.firstName || '') + (att.lastName ? ' ' + att.lastName : '');
+                                            }
                                             if (col === 'Paid') value = att.paid ? 'Yes' : 'No';
                                             if (col === 'Group Assigned') value = att.groupAssigned ? (groupNames[att.groupAssigned] || 'Loading...') : '';
                                             return <td key={i} className="efbc-table-cell">{value}</td>;

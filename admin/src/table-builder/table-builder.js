@@ -3,13 +3,16 @@ import Toast from '../components/Toast';
 import DraggableColumns from '../components/DraggableColumns';
 
 const allPossibleColumns = [
-    'Name','Email','Phone','Status','Golf Handicap','Club Rentals',
+    'First Name','Last Name','Full Name','Badge Name','Email','Phone','Status','Golf Handicap','Club Rentals',
     'Paid','City','State','Zip','Country','Address','Organization',
     'Company','Wednesday Activity','Group Assigned'
 ];
 
 const fieldKeyMap = {
-    "Name": "badgeName",
+    "First Name": "firstName",
+    "Last Name": "lastName",
+    "Full Name": "fullName",
+    "Badge Name": "badgeName",
     "Email": "email",
     "Phone": "mobile",
     "Status": "status",
@@ -197,6 +200,10 @@ const TableBuilder = () => {
                             {currentItems.map((att,idx)=>(
                                 <tr key={att.id||idx} className={idx % 2 === 0 ? 'efbc-row-odd' : 'efbc-row-even'}>{col.map((c,i)=>{
                                     let cellValue = att[fieldKeyMap[c]];
+                                    // Handle Full Name by combining firstName and lastName
+                                    if (c === 'Full Name') {
+                                        cellValue = (att.firstName || '') + (att.lastName ? ' ' + att.lastName : '');
+                                    }
                                     if (c === 'Paid') cellValue = cellValue ? 'Yes' : 'No';
                                     if (c === 'Group Assigned') {
                                         if (!cellValue) cellValue = '';

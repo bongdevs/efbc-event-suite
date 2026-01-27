@@ -22,6 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 columns.forEach(col => {
                     const key = colToKey[col] || '';
                     let value = key && att[key] ? att[key] : '';
+                    // Handle Full Name by combining firstName and lastName
+                    if (col === 'Full Name') {
+                        value = (att.firstName || '') + (att.lastName ? ' ' + att.lastName : '');
+                    }
                     if (col === 'Paid') value = att.paid ? 'Yes' : 'No';
                     if (col === 'Group Assigned') value = att.groupAssigned ? (att.groupAssigned_name || '') : '';
                     const td = document.createElement('td');
@@ -35,7 +39,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // Build columns map by reading table header
         const columns = Array.from(table.querySelectorAll('thead th')).map(th => th.textContent.trim());
         const colToKey = {
-            "Name": "badgeName",
+            "First Name": "firstName",
+            "Last Name": "lastName",
+            "Full Name": "fullName",
+            "Badge Name": "badgeName",
             "Email": "email",
             "Phone": "mobile",
             "Status": "status",
@@ -255,15 +262,34 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // sorting per page
             const headers = table.querySelectorAll('th');
+            const sortState = {}; // Track sort state per column
             headers.forEach((header, index) => {
-                let asc = true;
                 header.addEventListener('click', function () {
                     const tbody = table.querySelector('tbody');
                     const rows = Array.from(tbody.querySelectorAll('tr'));
+                    const columnName = header.textContent.trim();
+
+                    // Toggle sort direction for this column
+                    sortState[index] = sortState[index] === true ? false : true;
+                    const asc = sortState[index];
 
                     headers.forEach(h => h.classList.remove('asc', 'desc'));
 
                     rows.sort((a, b) => {
+                        // For Full Name, extract and sort by last name (last word in the cell)
+                        if (columnName === 'Full Name') {
+                            const fullNameA = a.children[index].textContent.trim();
+                            const fullNameB = b.children[index].textContent.trim();
+                            
+                            // Extract last name (last word)
+                            const lastNameA = fullNameA.split(' ').pop().toLowerCase();
+                            const lastNameB = fullNameB.split(' ').pop().toLowerCase();
+                            
+                            if (lastNameA < lastNameB) return asc ? -1 : 1;
+                            if (lastNameA > lastNameB) return asc ? 1 : -1;
+                            return 0;
+                        }
+                        // For all other columns, sort by text
                         const cellA = a.children[index].textContent.trim().toLowerCase();
                         const cellB = b.children[index].textContent.trim().toLowerCase();
                         if (cellA < cellB) return asc ? -1 : 1;
@@ -273,7 +299,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     rows.forEach(row => tbody.appendChild(row));
                     header.classList.add(asc ? 'asc' : 'desc');
-                    asc = !asc;
                 });
             });
 
@@ -303,10 +328,13 @@ document.addEventListener("DOMContentLoaded", function () {
             header.addEventListener('click', function () {
                 const tbody = table.querySelector('tbody');
                 const rows = Array.from(tbody.querySelectorAll('tr'));
+                const columnName = header.textContent.trim();
 
                 // Remove all asc/desc classes from this table only
                 headers.forEach(h => h.classList.remove('asc', 'desc'));
 
+                // For Full Name sorting, sort by text which was rendered as "firstName lastName"
+                // but we can also sort by lastName if we have the data
                 rows.sort((a, b) => {
                     const cellA = a.children[index].textContent.trim().toLowerCase();
                     const cellB = b.children[index].textContent.trim().toLowerCase();

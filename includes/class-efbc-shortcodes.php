@@ -16,7 +16,7 @@ class EFBC_Event_Shortcodes {
             'efbc-attendees-css',
             plugin_dir_url( __FILE__ ) . '../assets/css/front.css',
             array(),
-            '1.2.0'
+            '1.2.1'
         );
 
         wp_enqueue_script(
@@ -54,8 +54,8 @@ class EFBC_Event_Shortcodes {
         // Build URL base (cache will be used for 1 hour)
         $url_base = rtrim( $api_base, '/' ) . '/registrations/event/' . rawurlencode( $event_id );
 
-        // Use server-side pagination for the shortcode: fetch first page only (20 rows)
-        $per_page = 20;
+        // Use server-side pagination for the shortcode: fetch first page only (60 rows)
+        $per_page = 100;
         $page = 1;
 
         $res = EFBC_Event_API::get_attendees( $event_id, $page, $per_page, $activity_filter );
@@ -84,7 +84,10 @@ class EFBC_Event_Shortcodes {
 
         // Map columns to JSON fields
         $fieldKeyMap = [
-            "Name" => "badgeName",
+            "First Name" => "firstName",
+            "Last Name" => "lastName",
+            "Full Name" => "fullName",
+            "Badge Name" => "badgeName",
             "Email" => "email",
             "Phone" => "mobile",
             "Status" => "status",
@@ -142,6 +145,11 @@ class EFBC_Event_Shortcodes {
             foreach ($columns as $col) {
                 $key = $fieldKeyMap[$col] ?? '';
                 $value = $key && isset($att[$key]) ? $att[$key] : '';
+                // Handle Full Name by combining firstName and lastName
+                if ($col === "Full Name") {
+                    $value = (isset($att['firstName']) ? $att['firstName'] : '') . 
+                             (isset($att['lastName']) && !empty($att['lastName']) ? ' ' . $att['lastName'] : '');
+                }
                 if ($col === "Paid") $value = !empty($att['paid']) ? 'Yes' : 'No';
                 if ($col === "Group Assigned") {
                     $groupId = $att['groupAssigned'] ?? null;
