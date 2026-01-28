@@ -48,7 +48,7 @@ class EFBC_Event_API {
         $per_page = $per_page !== null ? max( 1, intval( $per_page ) ) : 20;
         $activity = $activity !== null && $activity !== '' ? trim( $activity ) : '';
 
-        // Check if we have cached data
+        // Check if we have cached data (cache for 30 seconds for performance)
         $full_dataset_key = 'efbc_attendees_full_' . md5( $url_base );
         $all_items = get_transient( $full_dataset_key );
 
@@ -91,8 +91,8 @@ class EFBC_Event_API {
                 $api_page++;
             }
 
-            // Cache the complete dataset for 1 hour
-            set_transient( $full_dataset_key, $all_items, HOUR_IN_SECONDS );
+            // Cache for 30 seconds - balances speed with fresh data updates
+            set_transient( $full_dataset_key, $all_items, 30 );
         }
 
         if ( empty( $all_items ) ) {
